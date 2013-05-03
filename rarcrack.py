@@ -2,17 +2,16 @@
 import sys, glob, os
 #from rarfile import RarFile
 
+try:
+    with open( '{}.log'.format(sys.argv[1]) ) as lastLog:
+        lastFile = lastLog.readline()
+        offset = lastLog.readline()
+except Exception:
+    lastFile = None
+    offset = 0
+
 #with RarFile(sys.argv[1]) as rarFile:
 for i in range(2,len(sys.argv)):
-
-    try:
-        with open( '{}.log'.format(sys.argv[1]) ) as lastLog:
-            lastFile = lastLog.readline()
-            offset = lastLog.readline()
-    except Exception:
-        lastFile = None
-        offset = 0
-
     for filename in glob.glob(sys.argv[i]):
         if lastFile and filename != lastFile:
             continue
@@ -32,6 +31,7 @@ for i in range(2,len(sys.argv)):
 
                 try:
                     #rarFile.extractall(pwd=password[:-1])
+                    print(password[:-1])
                     a = os.popen("unrar t -y -p{} {} 2>&1 | grep 'All OK'".format(
                         password[:-1], sys.argv[1]))
                     for i in a.readlines():
