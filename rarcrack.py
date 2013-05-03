@@ -1,44 +1,54 @@
 #!/usr/bin/env python3.2 
 import sys, glob, os
-from rarfile import RarFile
+#from rarfile import RarFile
 
-with RarFile(sys.argv[1]) as rarFile:
-    for i in range(2,len(sys.argv)):
+#with RarFile(sys.argv[1]) as rarFile:
+for i in range(2,len(sys.argv)):
 
-        try:
-            with open( '{}.log'.format(sys.argv[1]) ) as lastLog:
-                lastFile = lastLog.readline()
-                offset = lastLog.readline()
-        except Exception:
-            lastFile = None
-            offset = 0
-            pass
+    try:
+        with open( '{}.log'.format(sys.argv[1]) ) as lastLog:
+            lastFile = lastLog.readline()
+            offset = lastLog.readline()
+    except Exception:
+        lastFile = None
+        offset = 0
+        pass
 
-        for filename in glob.glob(sys.argv[i]):
-            if lastFile and filename != lastFile:
-                continue
+    for filename in glob.glob(sys.argv[i]):
+        if lastFile and filename != lastFile:
+            continue
 
-            with open(filename) as dictFile:
-                dictFile.seek(offset)
-                count = 0
-                print('Reading password from {}'.format(sys.argv[i]))
-                while True:
-                    password = dictFile.readline()
-                    if password == '':
-                        os.remove('{}.log'.format(sys.argv[1]))
-                        break
-
+        with open(filename) as dictFile:
+            dictFile.seek(offset)
+            count = 0
+            print('Reading password from {}'.format(sys.argv[i]))
+            while True:
+                password = dictFile.readline()
+                if password == '':
                     try:
-                        rarFile.extractall(pwd=password[:-1])
-                        print('密码已破解：{}'.format(password))
-                        #sys.stderr.write('密码已破解：{}'.format(password))
-                        exit(0)
-
+                        os.remove('{}.log'.format(sys.argv[1]))
                     except Exception:
-                        count += 1
-                        if count == 1000:
-                            print('Current : {}'.format(password))
-                            with open('{}.log'.format(sys.argv[1]), 'w',
-                                    encoding='utf-8') as log:
-                                log.write('{}\n{}'.format(filename,dictFile.tell()))
-                        continue
+                        pass
+                    break
+
+                try:
+                    #rarFile.extractall(pwd=password[:-1])
+                    a = os.popen("unrar t -y -p{} {} 2>&1 | grep 'All OK'".format(
+                        password[:-1], sys.argv[1]))
+                    print(1)
+                    for i in a.readlines():
+                        print(i)
+                        if i == 'All OK\n':
+                            print(3)
+                            print('密码已破解：{}'.format(password))
+                            sys.stderr.write('密码已破解：{}'.format(password))
+                            exit(0)
+
+                except Exception:
+                    count += 1
+                    if count == 1000:
+                        print('Current : {}'.format(password))
+                        with open('{}.log'.format(sys.argv[1]), 'w',
+                                encoding='utf-8') as log:
+                            log.write('{}\n{}'.format(filename,dictFile.tell()))
+                    continue
