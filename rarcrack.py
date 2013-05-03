@@ -31,7 +31,6 @@ for i in range(2,len(sys.argv)):
 
                 try:
                     #rarFile.extractall(pwd=password[:-1])
-                    print(password[:-1])
                     a = os.popen("unrar t -y -p{} {} 2>&1 | grep 'All OK'".format(
                         password[:-1], sys.argv[1]))
                     for i in a.readlines():
@@ -42,7 +41,7 @@ for i in range(2,len(sys.argv)):
 
                 except Exception:
                     count += 1
-                    if count == 1000:
+                    if count == 100:
                         print('Current : {}'.format(password))
                         with open('{}.log'.format(sys.argv[1]), 'w',
                                 encoding='utf-8') as log:
