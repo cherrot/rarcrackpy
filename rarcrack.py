@@ -12,7 +12,6 @@ for i in range(2,len(sys.argv)):
     except Exception:
         lastFile = None
         offset = 0
-        pass
 
     for filename in glob.glob(sys.argv[i]):
         if lastFile and filename != lastFile:
@@ -35,11 +34,8 @@ for i in range(2,len(sys.argv)):
                     #rarFile.extractall(pwd=password[:-1])
                     a = os.popen("unrar t -y -p{} {} 2>&1 | grep 'All OK'".format(
                         password[:-1], sys.argv[1]))
-                    print(1)
                     for i in a.readlines():
-                        print(i)
                         if i == 'All OK\n':
-                            print(3)
                             print('密码已破解：{}'.format(password))
                             sys.stderr.write('密码已破解：{}'.format(password))
                             exit(0)
