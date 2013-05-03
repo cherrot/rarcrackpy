@@ -39,7 +39,7 @@ for i in range(2,len(sys.argv)):
                         exit(0)
 
                 count += 1
-                if count == 100:
+                if count == 1000:
                     count = 0
                     print('Current : {}'.format(password))
                     with open('{}.log'.format(sys.argv[1]), 'w',
