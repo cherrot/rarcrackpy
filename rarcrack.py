@@ -48,7 +48,7 @@ for i in range(2,len(sys.argv)):
 
                 #rarFile.extractall(pwd=password[:-1])
                 try:
-                    a = os.popen("unrar t -y -p{} {} 2>&1 | grep 'All OK'".format(
+                    a = os.popen("unrar t -y -p'{}' {} 2>&1 | grep 'All OK'".format(
                         password[:-1], sys.argv[1]))
                     for i in a.readlines():
                         if i == 'All OK\n':
