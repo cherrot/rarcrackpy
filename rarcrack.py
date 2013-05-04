@@ -6,6 +6,7 @@ try:
     with open( '{}.log'.format(sys.argv[1]) ) as lastLog:
         lastFile = lastLog.readline()
         offset = lastLog.readline()
+        print('Reading password at {} from {}'.format(offset, lastFile))
 except Exception:
     lastFile = None
     offset = 0
@@ -24,7 +25,9 @@ for i in range(2,len(sys.argv)):
                 try:
                     password = dictFile.readline()
                 except Exception: #encoding Exception
-                    continue
+                    lastFile = None
+                    offset = 0
+                    break
                 if password == '':
                     try:
                         os.remove('{}.log'.format(sys.argv[1]))
@@ -44,7 +47,7 @@ for i in range(2,len(sys.argv)):
                 count += 1
                 if count == 1000:
                     count = 0
-                    print('Current : {}'.format(password))
+                    print('Current : {}'.format(password[:-1]))
                     with open('{}.log'.format(sys.argv[1]), 'w',
                             encoding='utf-8') as log:
                         log.write('{}\n{}'.format(filename,dictFile.tell()))
