@@ -1,6 +1,9 @@
 #!/usr/bin/env python3.2 
-import sys, glob, os
+import sys, glob, os, stat
 #from rarfile import RarFile
+
+from time import time
+lastTime = time()
 
 try:
     with open( '{}.log'.format(sys.argv[1]) ) as lastLog:
@@ -8,6 +11,7 @@ try:
         offset = lastLog.readline()
         print('Reading password at {} from {}'.format(offset, lastFile))
 except Exception:
+    print('no last file')
     lastFile = None
     offset = 0
 
@@ -15,6 +19,11 @@ except Exception:
 for i in range(2,len(sys.argv)):
     for filename in glob.glob(sys.argv[i]):
         if lastFile and filename != lastFile[:-1]:
+            continue
+
+        fileStats = os.stat(filename)
+        if not stat.S_ISREG(fileStats[stat.ST_MODE]) and \
+                not stat.S_ISLNK(fileStats[stat.ST_MODE]):
             continue
 
         with open(filename) as dictFile:
@@ -33,6 +42,7 @@ for i in range(2,len(sys.argv)):
                     try:
                         os.remove('{}.log'.format(sys.argv[1]))
                     except Exception:
+                        print('log file not exists')
                         pass
                     break
 
@@ -48,11 +58,15 @@ for i in range(2,len(sys.argv)):
                 except Exception:
                     print('error in popen')
                     continue
-
+ 
                 count += 1
                 if count == 200:
+                    nowTime = time()
                     count = 0
-                    print('Current : {}'.format(password[:-1]))
+                    print('Current : {} , Speed : {} pwds/s'.format(password[:-1],
+                        count//(nowTime - lastTime) ))
+                    lastTime = nowTime
+
                     with open('{}.log'.format(sys.argv[1]), 'w',
                             encoding='utf-8') as log:
                         log.write('{}\n{}'.format(filename,dictFile.tell()))
