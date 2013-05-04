@@ -21,7 +21,10 @@ for i in range(2,len(sys.argv)):
             count = 0
             print('Reading password from {}'.format(sys.argv[i]))
             while True:
-                password = dictFile.readline()
+                try:
+                    password = dictFile.readline()
+                except Exception: #encoding Exception
+                    continue
                 if password == '':
                     try:
                         os.remove('{}.log'.format(sys.argv[1]))
