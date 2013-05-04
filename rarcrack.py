@@ -62,9 +62,9 @@ for i in range(2,len(sys.argv)):
                 count += 1
                 if count == 200:
                     nowTime = time()
-                    count = 0
                     print('Current : {} , Speed : {} pwds/s'.format(password[:-1],
                         count//(nowTime - lastTime) ))
+                    count = 0
                     lastTime = nowTime
 
                     with open('{}.log'.format(sys.argv[1]), 'w',
