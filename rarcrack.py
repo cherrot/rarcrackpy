@@ -38,20 +38,25 @@ for i in range(2,len(sys.argv)):
                     offset = 0
                     print('Error in readline')
                     break
-                if password == '':
-                    try:
-                        os.remove('{}.log'.format(sys.argv[1]))
-                    except Exception:
-                        print('log file not exists')
-                        pass
+            #for password in dictFile:
+                if len(password) == 1:
+                    continue
+                elif password == '':
+                    lastFile = None
+                    offset = 0
+                    #try:
+                    #    os.remove('{}.log'.format(sys.argv[1]))
+                    #except Exception:
+                    #    print('log file not exists')
                     break
 
                 #rarFile.extractall(pwd=password[:-1])
                 try:
                     a = os.popen("unrar t -y -p'{}' {} 2>&1 | grep 'All OK'".format(
                         password[:-1].replace("'","."), sys.argv[1]))
-                    for i in a.readlines():
-                        if i == 'All OK\n':
+                    for outLine in a.readlines():
+                        print(outLine)
+                        if outLine == 'All OK\n':
                             print('密码已破解：{}'.format(password))
                             sys.stderr.write('密码已破解：{}'.format(password))
                             exit(0)
@@ -63,10 +68,11 @@ for i in range(2,len(sys.argv)):
                 if count == 200:
                     nowTime = time()
                     print('Current : {} , Speed : {} pwds/s'.format(password[:-1],
-                        count//(nowTime - lastTime) ))
+                        count//(nowTime - lastTime)))
                     count = 0
                     lastTime = nowTime
 
                     with open('{}.log'.format(sys.argv[1]), 'w',
                             encoding='utf-8') as log:
                         log.write('{}\n{}'.format(filename,dictFile.tell()))
+                        #log.write('{}\n{}'.format(filename,'0'))
